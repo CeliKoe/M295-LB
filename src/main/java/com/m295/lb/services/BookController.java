@@ -1,4 +1,2 @@
-package com.m295.lb;
-
-public class Resource {
+package com.m295.lb.services;public class BookController {
 }
