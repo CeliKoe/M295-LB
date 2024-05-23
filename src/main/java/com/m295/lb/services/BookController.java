@@ -5,6 +5,7 @@ import com.m295.lb.LendingRepository;
 import com.m295.lb.models.Book;
 import com.m295.lb.models.Lending;
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -110,8 +111,7 @@ public class BookController {
     }
 
     //Create a new Book data record
-    // @RolesAllowed("ADMIN")
-    @PermitAll
+    @RolesAllowed("ADMIN")
     @POST
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -142,7 +142,7 @@ public class BookController {
     }
 
     //Create Multiple Book data records
-    @PermitAll
+    @RolesAllowed("ADMIN")
     @POST
     @Path("/createMultiple")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -186,7 +186,7 @@ public class BookController {
     }
 
     //Update a Book data record
-    @PermitAll
+    @RolesAllowed("ADMIN")
     @PUT
     @Path("/update/{bookId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -223,7 +223,7 @@ public class BookController {
 
     //Delete a data record with BookID
     //@RolesAllowed("ADMIN")
-    @PermitAll
+    @RolesAllowed("ADMIN")
     @DELETE
     @Path("/{bookId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -245,7 +245,7 @@ public class BookController {
 
     //Delete all data records
     //@RolesAllowed("ADMIN")
-    @PermitAll
+    @RolesAllowed("ADMIN")
     @DELETE
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
