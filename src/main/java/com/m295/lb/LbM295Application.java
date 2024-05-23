@@ -1,9 +1,7 @@
-package com.m395.lbm295;
+package com.m295.lb;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
 public class LbM295Application {
 
 	public static void main(String[] args) {

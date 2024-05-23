@@ -1,4 +1,4 @@
-package com.m395.lbm295.filters;
+package com.m295.lb.filters;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

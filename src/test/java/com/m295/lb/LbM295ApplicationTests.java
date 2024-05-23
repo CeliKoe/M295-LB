@@ -1,4 +1,4 @@
-package com.m395.lbm295;
+package com.m295.lb;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
