@@ -185,6 +185,42 @@ public class BookController {
         return Response.status(Response.Status.CREATED).entity(savedBooks).build();
     }
 
+    //Update a Book data record
+    @PermitAll
+    @PUT
+    @Path("/update/{bookId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateBook(@PathParam("bookId") Integer bookId, Book book) {
+        if (book == null) {
+            log.error("Attempted to update a book, but the data was null");
+            return Response.status(Response.Status.BAD_REQUEST).entity("Book data must not be null.").build();
+        }
+
+        Optional<Book> existingBook = bookRepository.findById(bookId);
+        if (!existingBook.isPresent()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Book with ID " + bookId + " not found.").build();
+        }
+
+        try {
+            if (book.getLending() != null && book.getLending().getLendingId() != null) {
+                Integer lendingId = book.getLending().getLendingId();
+                Lending lending = lendingRepository.findById(lendingId).orElse(null);
+                if (lending == null) {
+                    return Response.status(Response.Status.BAD_REQUEST).entity("No Lending found with ID: " + lendingId).build();
+                }
+                book.setLendingId(lending);
+            }
+            book.setBookId(bookId); // Sicherstellen, dass die ID des Buches gesetzt ist.
+            Book updatedBook = bookRepository.save(book);
+            log.info("Successfully updated book: {}", updatedBook);
+            return Response.status(Response.Status.OK).entity(updatedBook).build();
+        } catch (Exception e) {
+            log.error("Error updating the book", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating the book: " + e.getMessage()).build();
+        }
+    }
+
     //Delete a data record with BookID
     //@RolesAllowed("ADMIN")
     @PermitAll
