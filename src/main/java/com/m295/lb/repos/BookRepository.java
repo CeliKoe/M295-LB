@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Integer> {
+
     List<Book> findByTitleContainingAndPublicationDate(String title, Date publicationDate);
     List<Book> findByTitleContaining(String title);
     List<Book> findByPublicationDate(Date publicationDate);

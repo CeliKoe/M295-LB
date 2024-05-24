@@ -79,7 +79,7 @@ public class GetTests {
                 .build()
                 .execute(request);
 
-        // Überprüfen, ob der Statuscode 405 Method Not Allowed ist
+        // Should get Statuscode 405 Method Not Allowed
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, httpResponse.getStatusLine().getStatusCode());
     }
 
@@ -117,24 +117,22 @@ public class GetTests {
         assertTrue(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK && count >= 0);  // Counter can't be negativ
     }
 
-    //Negative Test => None
+    //Negative Test => None because it's not possible to test
 
 
     //Filter with Text and Date (Title, Publication Date) endpoint
     //Positive Test
     @Test
     public void givenValidTitle_whenSearchBooks_thenResponseCodeOKAndBooksReturned() throws IOException {
-        String title = "1984";  // Stellen Sie sicher, dass dieser Titel in Ihrer Datenbank existiert
+        String title = "1984";
         String url = "http://localhost:8080/artifact/resources/library/search?title=" + URLEncoder.encode(title, "UTF-8");
 
         HttpUriRequest request = new HttpGet(url);
 
         HttpResponse httpResponse = HttpClientBuilder.create().build().execute(request);
 
-        // Überprüfung des Statuscodes
         assertEquals(HttpStatus.SC_OK, httpResponse.getStatusLine().getStatusCode());
 
-        // Lesen und Überprüfen der Antwort
         String jsonOutput = EntityUtils.toString(httpResponse.getEntity());
         assertTrue(jsonOutput.contains(title));
     }

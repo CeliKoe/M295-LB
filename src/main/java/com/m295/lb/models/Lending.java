@@ -13,9 +13,7 @@ public class Lending {
     @Column(name = "Name_Borrower")
     private String nameBorrower;
 
-    public Lending(){
-
-    }
+    public Lending(){}
 
     public Integer getLendingId() {
         return lendingId;
@@ -32,5 +30,4 @@ public class Lending {
     public void setNameBorrower(String nameBorrower) {
         this.nameBorrower = nameBorrower;
     }
-
 }

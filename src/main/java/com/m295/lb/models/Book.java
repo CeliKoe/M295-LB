@@ -42,8 +42,7 @@ public class Book {
     @JoinColumn(name = "Lending_ID")  // , nullable = true
     private Lending lending;
 
-    public Book(){
-    }
+    public Book(){}
 
     public Lending getLending() {
         return lending;

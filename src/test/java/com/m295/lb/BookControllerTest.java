@@ -27,7 +27,7 @@ public class BookControllerTest {
     //Testing boundary conditions
     //DB Error
     @Test
-    public void givenDatabaseError_whenGetAllBooks_thenResponseCodeInternalServerError() throws Exception {
+    public void givenDatabaseError_whenGetAllBooks_thenResponseCodeInternalServerError() {
         // Configure Mocks
         when(mockRepository.findAll()).thenThrow(new RuntimeException("Database error"));
 
