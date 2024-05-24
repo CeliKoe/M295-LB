@@ -1,32 +1,39 @@
 # SmartLibrary | M295-LB
 ## Beschreibung
-**SmartLibrary** ist ein Bibliotheksverwaltungssystem. Es ermöglicht das Verwalten von Büchern und unterstützt alle Kernprozesse von der Ausleihe bis zur Rückgabe. 
+**SmartLibrary** ist ein Bibliotheksverwaltungssystem. Es ermöglicht das Verwalten von Büchern und unterstützt die Ausleihe bis zur Rückgabe. 
 Das System vereinfacht auch die Verwaltung von Nutzerdaten. 
 Ziel ist es, die Bibliotheksnutzung effizienter zu gestalten und die administrativen Aufgaben zu reduzieren.
 
 # Visuals
 ## Datenbankdiagramm
-![img.png](img.png)
+![img.png](images/img.png)
 
 ## Klassendiagramm
-![img_1.png](img_1.png)
+![img_1.png](images/img_1.png)
 
 ## Screenshots vom Testing
-### Positive / Negative Get-Tests
-![img_2.png](img_2.png)
+### Get-Tests
+Ich habe hier jeden Get-Service mit je einem Positiven und einem Negativen Test getestet.
+![img_2.png](images/img_2.png)
 
-### Positive / Negative Delete-Tests
-![img_4.png](img_4.png)
-![img_5.png](img_5.png)
+### Delete-Tests
+Ich habe hier jeden Delete-Service mit je einem Positiven und einem Negativen Test getestet.
+Den Delete book with ID endpoint musste ich seperat testen, darum die beiden Screenshots.
+![img_4.png](images/img_4.png)
+![img_5.png](images/img_5.png)
 
-### Positive / Negative Post-Tests
-![img_6.png](img_6.png)
+### Post-Tests
+Ich habe hier jeden Post-Service mit je einem Positiven und einem Negativen Test getestet.
+Hier sind die negativen Tests gescheitert, aus einem mir unklaren Grund.
+![img_6.png](images/img_6.png)
 
-### Positive / Negative Put-Tests
-![img_7.png](img_7.png)
+### Put-Tests
+Ich habe hier den Put-Service mit je einem Positiven und einem Negativen Test getestet.
+![img_7.png](images/img_7.png)
 
 ### Boundary conditions BookController-Tests
-![img_3.png](img_3.png)
+Ich habe hier jeden BookController mit einem environment test getestet.
+![img_3.png](images/img_3.png)
 
 ## Validierungsregeln für Buch-Entität
 ### 1. `publicationDate`
@@ -43,8 +50,6 @@ Ziel ist es, die Bibliotheksnutzung effizienter zu gestalten und die administrat
 - **Regel**: Der Titel muss zwischen 3 und 100 Zeichen lang sein.
 - **Implementierung**: Verwendet die Annotation `@Size`, um Mindest- und Höchstlängenbeschränkungen durchzusetzen.
 - **Fehlermeldung**: „Der Titel muss zwischen 3 und 100 Zeichen lang sein.“
-
-### Verwendung im Service Layer
 
 
 # Berechtigungsmatrix für die Book-Service-Endpoints
@@ -63,11 +68,11 @@ Die folgende Matrix beschreibt die Zugriffsberechtigungen für die verschiedenen
 | PUT /library/update/{bookId}| Aktualisieren eines Buchdatensatzes         |   ✔   |   ✘   |
 | DELETE /library/{bookId}    | Löschen eines Buchdatensatzes               |   ✔   |   ✘   |
 | DELETE /library/all         | Löschen aller Bücher                        |   ✔   |   ✘   |
+Leider konnte der **Post /createTable** endpoint nicht implementiert werden
 
 ## Rollendefinitionen
 - **LIBRARIAN**: Bibilothekaren haben Vollzugriff auf alle Endpunkte, einschließlich Erstellung, Aktualisierung und Löschung von Buchdatensätzen.
 - **GUEST**: Gäste haben ausschließlich Lesezugriff und können keine Daten erstellen, aktualisieren oder löschen.
-
 
 ### OpenAPI Dokumentation der Services
 ```yaml
@@ -249,11 +254,11 @@ paths:
         - in: "query"
           name: "price"
           schema:
-            type: "integer"
+            type: "double"
         - in: "query"
           name: "publicationDate"
           schema:
-            type: "string"
+            type: "date"
         - in: "query"
           name: "title"
           schema:
@@ -306,11 +311,11 @@ paths:
         - in: "query"
           name: "price"
           schema:
-            type: "integer"
+            type: "double"
         - in: "query"
           name: "publicationDate"
           schema:
-            type: "string"
+            type: "date"
         - in: "query"
           name: "title"
           schema:
@@ -368,11 +373,11 @@ paths:
         - in: "query"
           name: "price"
           schema:
-            type: "integer"
+            type: "double"
         - in: "query"
           name: "publicationDate"
           schema:
-            type: "string"
+            type: "date"
         - in: "query"
           name: "title"
           schema:
@@ -453,7 +458,6 @@ components:
 
 ```
 
-
 # SQL-Script
 ```sql
 DROP DATABASE IF EXISTS Library;
@@ -479,9 +483,35 @@ CREATE TABLE Book(
     FOREIGN KEY (Lending_ID) REFERENCES Lending(Lending_ID)
 );
 ```
+# SQL Test-daten
+```sql
+INSERT INTO Lending (Name_Borrower) VALUES ('Max Mustermann');
+INSERT INTO Lending (Name_Borrower) VALUES ('Maria Musterfrau');
 
+INSERT INTO Book (Title, Author, Publication_Date, Category, Availability, Price, Lending_ID) 
+VALUES ('1984', 'George Orwell', '2020-01-02', 'Dystopian', TRUE, 9.99, 1);
+
+INSERT INTO Book (Title, Author, Publication_Date, Category, Availability, Price, Lending_ID) 
+VALUES ('Brave New World', 'Aldous Huxley', '2020-01-02', 'Science Fiction', FALSE, 12.50, 1);
+
+INSERT INTO Book (Title, Author, Publication_Date, Category, Availability, Price, Lending_ID) 
+VALUES ('To Kill a Mockingbird', 'Harper Lee', '2020-01-02', 'Fiction', TRUE, 8.99, 2);
+```
 # Zusammenfassung
+## Positive Aspekte:
+-   **Zeiteinteilung:** Effektive Planung führte zu einem strukturierten und effizienten Arbeitsablauf.
+-   **Entwicklung der Endpoints:** Die Implementierung der API-Endpunkte verlief erfolgreich und ohne größere Schwierigkeiten.
+-   **Testen:** Das Erstellen umfassender Tests gewährleistete die Funktionalität und Robustheit der Anwendung.
+-   **Allgemeine Erfahrung:** Das Projekt war insgesamt eine lehrreiche und vergnügliche Erfahrung, die viele erfolgreiche Elemente umfasste.
 
+## Verbesserungsbereiche:
+-   **Readme-Dokumentation:** Die Erstellung der Readme-Datei war zeitaufwendig; effizientere Prozesse könnten zukünftig hilfreich sein.
+-   **Suchfunktion im Get-Endpoint:** Die Suchfunktion unterstützt derzeit nur Text, obwohl eine Kombination aus Datum und Text geplant war.
+-   **Erstellen von Tabellen über POST-Endpoint:** Unsicherheiten bei der Implementierung könnten durch eine bessere Vorbereitung oder Recherche vermieden werden. 
+Leider konnte ich den endpoint nicht mehr implementieren.
 
-# Autor
-## Céline Kölbl
+## Schlussfolgerung:
+Das Projekt war trotz kleinerer Herausforderungen insgesamt ein Erfolg für mich:)
+
+## Autor
+Céline Kölbl

@@ -185,7 +185,7 @@ public class BookController {
     @Path("/createMultiple")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createBooks(List<Book> books) {
+    public Response createBooks(@Valid List<Book> books) {
         if (books == null || books.isEmpty()) {
             log.error("Attempted to create books, but the data was null or empty");
             return Response.status(Response.Status.BAD_REQUEST).entity("Book data must not be null or empty.").build();
@@ -229,7 +229,7 @@ public class BookController {
     @Path("/update/{bookId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateBook(@PathParam("bookId") Integer bookId, Book book) {
+    public Response updateBook(@PathParam("bookId") Integer bookId, @Valid Book book) {
         if (book == null) {
             log.error("Attempted to update a book, but the data was null");
             return Response.status(Response.Status.BAD_REQUEST).entity("Book data must not be null.").build();

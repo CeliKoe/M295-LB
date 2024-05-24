@@ -2,7 +2,6 @@ package com.m295.lb.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -25,7 +24,7 @@ public class Book {
     private String author;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
-    //@FutureOrPresent(message = "Publication date must be today or in the future.")
+    @FutureOrPresent(message = "Publication date must be today or in the future.")
     @Column(name = "Publication_Date")
     private Date publicationDate;
 
@@ -37,7 +36,6 @@ public class Book {
     private Boolean availability;
 
     @Column(name = "Price")
-    @DecimalMin(value = "0.01", message = "Price must be at least 0.01.")
     private Double price;
 
     @ManyToOne

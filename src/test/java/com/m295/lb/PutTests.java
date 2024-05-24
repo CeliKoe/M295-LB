@@ -2,13 +2,10 @@ package com.m295.lb;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -56,6 +53,4 @@ public class PutTests {
         // Statuscode 404 (Not Found)
         assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusLine().getStatusCode());
     }
-
-
 }

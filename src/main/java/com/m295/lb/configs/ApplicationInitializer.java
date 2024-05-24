@@ -1,4 +1,4 @@
-package com.m295.lb;
+package com.m295.lb.configs;
 
 import jakarta.servlet.ServletContext;
 import org.springframework.core.Ordered;
@@ -18,6 +18,6 @@ public class ApplicationInitializer
 
         servletContext.addListener(new ContextLoaderListener(context));
         servletContext.setInitParameter(
-                "contextConfigLocation", "com.m295.lb.configs");
+                "contextConfigLocation", "com.m295.lb");
     }
 }
