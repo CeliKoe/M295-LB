@@ -1,7 +1,7 @@
 # SmartLibrary | M295-LB
 ## Beschreibung
-**SmartLibrary** ist ein Bibliotheksverwaltungssystem. Es ermöglicht das Verwalten von Büchern und unterstützt die Ausleihe bis zur Rückgabe. 
-Das System vereinfacht auch die Verwaltung von Nutzerdaten. 
+**SmartLibrary** ist ein Bibliotheksverwaltungssystem. Es ermöglicht das Verwalten von Büchern und unterstützt die Ausleihe bis zur Rückgabe.
+Das System vereinfacht auch die Verwaltung von Nutzerdaten.
 Ziel ist es, die Bibliotheksnutzung effizienter zu gestalten und die administrativen Aufgaben zu reduzieren.
 
 # Visuals
@@ -13,26 +13,26 @@ Ziel ist es, die Bibliotheksnutzung effizienter zu gestalten und die administrat
 
 ## Screenshots vom Testing
 ### Get-Tests
-Ich habe hier jeden Get-Service mit je einem Positiven und einem Negativen Test getestet.
+Ich habe hier jeden Get-Service mit je einem positiven und einem negativen Test getestet.
 ![img_2.png](images/img_2.png)
 
 ### Delete-Tests
-Ich habe hier jeden Delete-Service mit je einem Positiven und einem Negativen Test getestet.
-Den Delete book with ID endpoint musste ich seperat testen, darum die beiden Screenshots.
+Ich habe hier jeden Delete-Service mit je einem positiven und einem negativen Test getestet.
+Den Delete book with ID endpoint musste ich separat testen, darum die beiden Screenshots.
 ![img_4.png](images/img_4.png)
 ![img_5.png](images/img_5.png)
 
 ### Post-Tests
-Ich habe hier jeden Post-Service mit je einem Positiven und einem Negativen Test getestet.
+Ich habe hier jeden Post-Service mit je einem positiven und einem negativen Test getestet.
 Hier sind die negativen Tests gescheitert, aus einem mir unklaren Grund.
 ![img_6.png](images/img_6.png)
 
 ### Put-Tests
-Ich habe hier den Put-Service mit je einem Positiven und einem Negativen Test getestet.
+Ich habe hier den Put-Service mit je einem positiven und einem negativen Test getestet.
 ![img_7.png](images/img_7.png)
 
-### Boundary conditions BookController-Tests
-Ich habe hier jeden BookController mit einem environment test getestet.
+### Rahmenbedingungen BookController-Tests
+Ich habe hier jeden BookController mit einem Umgebungstest getestet.
 ![img_3.png](images/img_3.png)
 
 ## Validierungsregeln für Buch-Entität
@@ -50,7 +50,6 @@ Ich habe hier jeden BookController mit einem environment test getestet.
 - **Regel**: Der Titel muss zwischen 3 und 100 Zeichen lang sein.
 - **Implementierung**: Verwendet die Annotation `@Size`, um Mindest- und Höchstlängenbeschränkungen durchzusetzen.
 - **Fehlermeldung**: „Der Titel muss zwischen 3 und 100 Zeichen lang sein.“
-
 
 # Berechtigungsmatrix für die Book-Service-Endpoints
 
