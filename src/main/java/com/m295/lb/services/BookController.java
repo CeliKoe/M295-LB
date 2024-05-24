@@ -1,21 +1,22 @@
 package com.m295.lb.services;
 
-import com.m295.lb.BookRepository;
-import com.m295.lb.LendingRepository;
+import com.m295.lb.repos.BookRepository;
+import com.m295.lb.repos.LendingRepository;
 import com.m295.lb.models.Book;
 import com.m295.lb.models.Lending;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.ParseException;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,6 @@ public class BookController {
 
     @Autowired
     private BookRepository bookRepository;
-
     @Autowired
     private LendingRepository lendingRepository;
 
@@ -35,19 +35,42 @@ public class BookController {
     @GET
     @Path("/all")
     @Produces({ MediaType.APPLICATION_JSON })
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public Response getAllBooks() {
+        log.info("Fetching all books");
+        try {
+            List<Book> books = bookRepository.findAll();
+            return Response.ok(books).build();
+        } catch (Exception e) {
+            log.error("Failed to fetch all books", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("An error occurred while fetching all books.")
+                    .build();  // Return a server error response.
+        }
     }
 
     //Read data records with BookID
     @PermitAll
     @GET
-    //@Valid
     @Path("/{bookId}")
     @Produces({ MediaType.APPLICATION_JSON })
-    public Optional<Book> getBook(@PathParam("bookId") int bookId) {
+    public Response getBook(@PathParam("bookId") int bookId) {
         log.info("Fetching Book with ID: {}", bookId);
-        return bookRepository.findById(bookId);
+        try {
+            Optional<Book> book = bookRepository.findById(bookId);
+            if (book.isPresent()) {
+                return Response.ok(book.get()).build();
+            } else {
+                log.warn("No book found with ID: {}", bookId);
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("No book found with the provided ID.")
+                        .build();
+            }
+        } catch (Exception e) {
+            log.error("Error fetching book with ID: {}", bookId, e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("An error occurred while fetching the book.")
+                    .build();
+        }
     }
 
     //Data record existing (with ID)
@@ -56,67 +79,78 @@ public class BookController {
     @Path("/exists/{bookId}")
     @Produces({ MediaType.APPLICATION_JSON })
     public Response checkBookExists(@PathParam("bookId") int bookId) {
+        log.info("Checking existence for bookId: {}", bookId);
         boolean exists = bookRepository.existsById(bookId);
-        return exists ? Response.ok().build() : Response.status(Response.Status.NOT_FOUND).build();
+
+        if (exists) {
+            log.info("Book with bookId: {} exists.", bookId);
+            return Response.ok().build();
+        } else {
+            log.warn("Book with bookId: {} not found.", bookId);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
+
 
     //Determine number of data records
     @PermitAll
     @GET
     @Path("/count")
     @Produces({ MediaType.APPLICATION_JSON })
-    public Long countBooks() {
-        return bookRepository.count();
+    public Response countBooks() {
+        log.info("Attempting to count all books");
+        try {
+            long count = bookRepository.count();
+            log.info("Successfully counted all books: {}", count);
+            return Response.ok(count).build();
+        } catch (Exception e) {
+            log.error("Error counting books", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("An error occurred while counting the books.")
+                    .build();
+        }
     }
 
-    //Filter with Text (Title, Author) return von title data record not working
+    //Filter with Text and date(Title, Publication Date) //Title only works
     @PermitAll
     @GET
     @Path("/search")
     @Produces({ MediaType.APPLICATION_JSON })
-    public List<Book> getBooksByTitleOrAuthor(@QueryParam("title") String title, @QueryParam("author") String author) {
+    public List<Book> getBooksByTitleOrPublicationDate(@QueryParam("title") String title, @QueryParam("publicationDate") String publicationDateString) {
         List<Book> books = new ArrayList<>();
-        if (title != null && author != null) {
-            // Suche nach Büchern, die sowohl den Titel als auch den Autor enthalten
-            log.info("Searching for books with title '{}' and author '{}'", title, author);
-            books = bookRepository.findByTitleContainingAndAuthorContaining(title, author);
+        Date publicationDate = null;
+        if (publicationDateString != null) {
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                publicationDate = (Date) formatter.parse(publicationDateString);
+            } catch (ParseException | java.text.ParseException e) {
+                log.error("Error parsing publication date '{}'", publicationDateString, e);
+                return books; // return empty list or handle error appropriately
+            }
+        }
+
+        if (title != null && publicationDate != null) {
+            log.info("Searching for books with title '{}' and publication date '{}'", title, publicationDate);
+            books = bookRepository.findByTitleContainingAndPublicationDate(title, publicationDate);
         } else if (title != null) {
-            // Suche nur nach Titel
             log.info("Searching for books with title: '{}'", title);
             books = bookRepository.findByTitleContaining(title);
-        } else if (author != null) {
-            // Suche nur nach Autor
-            log.info("Searching for books with author: '{}'", author);
-            books = bookRepository.findByAuthorContaining(author);
+        } else if (publicationDate != null) {
+            log.info("Searching for books with publication date: '{}'", publicationDate);
+            books = bookRepository.findByPublicationDate(publicationDate);
         } else {
-            // Keine Parameter angegeben, leere Liste zurückgeben
             log.info("No search criteria provided, returning empty book list.");
         }
         return books;
     }
 
-    //Filter with date not working!!!
-    @PermitAll
-    @GET
-    @Path("/date/{publicationDate}")
-    @Produces({ MediaType.APPLICATION_JSON })
-    public List<Book> getBooksByDate(@PathParam("publicationDate") String publicationDate) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-            LocalDate date = LocalDate.parse(publicationDate, formatter);
-            return bookRepository.findByPublicationDate(Date.valueOf(date).toLocalDate());
-        } catch (DateTimeParseException e) {
-            throw new BadRequestException("Das Datum muss im Format dd.MM.yyyy sein.");
-        }
-    }
-
     //Create a new Book data record
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("LIBRARIAN")
     @POST
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createBook(Book book) {
+    public Response createBook(@Valid Book book) { // Hinzufügen des @Valid Annotations zur Validierung
         if (book == null) {
             log.error("Attempted to create a book, but the data was null");
             return Response.status(Response.Status.BAD_REQUEST).entity("Book data must not be null.").build();
@@ -130,11 +164,15 @@ public class BookController {
                 if (lending == null) {
                     return Response.status(Response.Status.BAD_REQUEST).entity("No Lending found with ID: " + lendingId).build();
                 }
-                book.setLendingId(lending); // Korrigierte Methode verwenden
+                book.setLendingId(lending);
             }
             Book savedBook = bookRepository.save(book);
             log.info("Successfully created book: {}", savedBook);
             return Response.status(Response.Status.CREATED).entity(savedBook).build();
+
+        } catch (ConstraintViolationException e) {
+            log.error("Validation error while creating the book", e);
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (Exception e) {
             log.error("Error creating the book", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating the book: " + e.getMessage()).build();
@@ -142,7 +180,7 @@ public class BookController {
     }
 
     //Create Multiple Book data records
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("LIBRARIAN")
     @POST
     @Path("/createMultiple")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -186,7 +224,7 @@ public class BookController {
     }
 
     //Update a Book data record
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("LIBRARIAN")
     @PUT
     @Path("/update/{bookId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -211,7 +249,7 @@ public class BookController {
                 }
                 book.setLendingId(lending);
             }
-            book.setBookId(bookId); // Sicherstellen, dass die ID des Buches gesetzt ist.
+            book.setBookId(bookId);
             Book updatedBook = bookRepository.save(book);
             log.info("Successfully updated book: {}", updatedBook);
             return Response.status(Response.Status.OK).entity(updatedBook).build();
@@ -222,8 +260,7 @@ public class BookController {
     }
 
     //Delete a data record with BookID
-    //@RolesAllowed("ADMIN")
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("LIBRARIAN")
     @DELETE
     @Path("/{bookId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -244,8 +281,7 @@ public class BookController {
     }
 
     //Delete all data records
-    //@RolesAllowed("ADMIN")
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("LIBRARIAN")
     @DELETE
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
@@ -269,4 +305,6 @@ public class BookController {
         }
     }
 
+    public void setBookRepository(BookRepository mockRepository) {
+    }
 }

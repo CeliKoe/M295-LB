@@ -1,8 +1,5 @@
 package com.m295.lb.models;
 
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,7 +10,6 @@ public class Lending {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "Lending_ID")
     private Integer lendingId;
-
     @Column(name = "Name_Borrower")
     private String nameBorrower;
 

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 
@@ -15,6 +17,7 @@ public class Book {
     @Column(name = "Book_ID")
     private Integer bookId;
 
+    @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters long.")
     @Column(name = "Title")
     private String title;
 
@@ -22,10 +25,11 @@ public class Book {
     private String author;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
-    //@FutureOrPresent(message = "Date must be today or in the future.")
+    //@FutureOrPresent(message = "Publication date must be today or in the future.")
     @Column(name = "Publication_Date")
     private Date publicationDate;
 
+    @Pattern(regexp = "^(Fiction|Non-Fiction|Science Fiction|Biography|History|Children)$", message = "Category must be one of the following: Fiction, Non-Fiction, Science Fiction, Biography, History, Children.")
     @Column(name = "Category")
     private String category;
 
@@ -33,11 +37,11 @@ public class Book {
     private Boolean availability;
 
     @Column(name = "Price")
-    //@DecimalMin(value = "0.01", message = "Price must be at least 0.01.")
+    @DecimalMin(value = "0.01", message = "Price must be at least 0.01.")
     private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "Lending_ID")  // , nullable = true nullable true wenn nicht jede Buchausleihe erforderlich ist
+    @JoinColumn(name = "Lending_ID")  // , nullable = true
     private Lending lending;
 
     public Book(){
